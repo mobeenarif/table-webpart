@@ -4,17 +4,17 @@ import {
   IPropertyPaneConfiguration,
   PropertyPaneTextField
 } from '@microsoft/sp-webpart-base';
-import {  
-  Environment,  
-  EnvironmentType  
-} from '@microsoft/sp-core-library';  
+import {
+  Environment,
+  EnvironmentType
+} from '@microsoft/sp-core-library';
 import { escape } from '@microsoft/sp-lodash-subset';
 
 import styles from './TableWebpartWebPart.module.scss';
 import * as strings from 'TableWebpartWebPartStrings';
 import {
   SPHttpClient,
-  SPHttpClientResponse   
+  SPHttpClientResponse
 } from '@microsoft/sp-http';
 export interface ITableWebpartWebPartProps {
   description: string;
@@ -22,45 +22,45 @@ export interface ITableWebpartWebPartProps {
 export interface ISPLists {
   value: ISPList[];
 }
-
-export interface ISPList {   
-  ID: string;  
-  SubName: string;   
-}  
+///
+export interface ISPList {
+  ID: string;
+  SubName: string;
+}
 export default class TableWebpartWebPart extends BaseClientSideWebPart<ITableWebpartWebPartProps> {
-  private _getListData(): Promise<ISPLists> {  
-    return this.context.spHttpClient.get(this.context.pageContext.web.absoluteUrl + `/_api/web/lists/GetByTitle('Subjects')/Items`, SPHttpClient.configurations.v1)  
+  private _getListData(): Promise<ISPLists> {
+    return this.context.spHttpClient.get(this.context.pageContext.web.absoluteUrl + `/_api/web/lists/GetByTitle('Subjects')/Items`, SPHttpClient.configurations.v1)
       .then((response: SPHttpClientResponse) => {
         return response.json();
-    });  
+      });
   }
 
-  private _renderListAsync(): void {  
-      
-    if (Environment.type === EnvironmentType.Local) {   
-    }  
-    else {  
-        this._getListData()  
-      .then((response) => {  
-        this._renderList(response.value);  
-      });  
-    }    
+  private _renderListAsync(): void {
+
+    if (Environment.type === EnvironmentType.Local) {
+    }
+    else {
+      this._getListData()
+        .then((response) => {
+          this._renderList(response.value);
+        });
+    }
   }
 
-  private _renderList(items: ISPList[]): void {  
-    let html: string = '<table class="TFtable" border=1 width=100% style="border-collapse: collapse;">';  
-    html += `<th>ID</th><th>Name</th>`;  
-    items.forEach((item: ISPList) => {  
+  private _renderList(items: ISPList[]): void {
+    let html: string = '<table class="TFtable" border=1 width=100% style="border-collapse: collapse;">';
+    html += `<th>ID</th><th>Name</th>`;
+    items.forEach((item: ISPList) => {
       html += `  
            <tr>  
           <td>${item.ID}</td>  
           <td>${item.SubName}</td>  
           </tr>  
-          `;  
-    });  
-    html += `</table>`;  
-    const listContainer: Element = this.domElement.querySelector('#spListContainer');  
-    listContainer.innerHTML = html;  
+          `;
+    });
+    html += `</table>`;
+    const listContainer: Element = this.domElement.querySelector('#spListContainer');
+    listContainer.innerHTML = html;
   }
   public render(): void {
     this.domElement.innerHTML = `  
@@ -79,8 +79,8 @@ export default class TableWebpartWebPart extends BaseClientSideWebPart<ITableWeb
   <div id="spListContainer" />  
    </div>  
   </div>  
-  </div>`; 
-  this._renderListAsync();  
+  </div>`;
+    this._renderListAsync();
   }
 
   protected get dataVersion(): Version {
